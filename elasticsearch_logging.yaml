@@ -1,7 +1,25 @@
 groups:
 - name: elasticsearch_logging
   rules:
-  - alert: ClusterHealthStatusRED
+  #
+  # Cluster health alerts
+  # =====================
+  #
+  # Cluster health can become RED by natural cause or by critical cause.
+  #
+  # The natural causes do not last long and they include:
+  #   - a new index is created and all its primary shards haven’t been allocated yet
+  #   - a master node has not been elected yet (for example master node dies and a new master node hasn’t been
+  #     elected yet, and this can take some time if the cluster load is high...)
+  #
+  # If the natural cause takes long or the cause is different than those listed above then it is considered
+  # the critical cause.
+  #
+  # Cluster health becomes YELLOW if not all index replica shards are allocated. If the goal is to have GREEN cluster
+  # health (ie number of replica shards is configured accordingly) but the status stays YELLOW for too long then this
+  # is considered serious.
+  #
+  - alert: Cluster_Health_Status_RED
     expr: (es_cluster_status{cluster=”$cluster”}) == 2
     for: 2m
     labels:
@@ -9,7 +27,7 @@ groups:
     annotations:
       description: Cluster health status is RED this is serious
       summary: Cluster health status RED
-  - alert: ClusterHealthStatusYELLOW
+  - alert: Cluster_Health_Status_YELLOW
     expr: (es_cluster_status{cluster=”$cluster”}) == 1
     for: 20m
     labels:
@@ -17,3 +35,96 @@ groups:
     annotations:
       description: Cluster health status is YELLOW for extended period of time
       summary: Cluster health status YELLOW
+  #
+  # Bulk Requests Rejection
+  # =======================
+  #
+  # Sudden spikes (increases) in number of rejected bulk requests is considered serious. It means the node can not keep
+  # up with incoming bulk request indexing pace.
+  #
+  - alert: Bulk_Requests_Rejection_HIGH
+    expr: TBD - es_threadpool_threads_count{cluster=”$cluster”, node=”$node”, name=”bulk”, type=”rejected”}
+    for: 20m
+    labels:
+      severity: high
+    annotations:
+      description: TBD
+      summary: TBD
+  #
+  # Disk Usage
+  # ==========
+  #
+  # There are two important thresholds that impact how ES node allocates index shards.
+  #   - 85% used - Low watermark
+  #   - 90% used - High watermark
+  #
+  # Disk allocation thresholds (low, high watermarks) are explained in [1,2].
+  #
+  # It is important the make sure there is enough free disk space for automatic background Lucene segment merges.
+  # Ideally as much free disk space as total sum of actual segment size (ie, data can fit into disk twice).
+  #
+  # [1] https://www.elastic.co/guide/en/elasticsearch/reference/2.4/disk-allocator.html
+  # [2] https://www.elastic.co/guide/en/elasticsearch/reference/5.5/disk-allocator.html
+  #
+  - alert: Disk_Low_Watermark_Reached
+    expr: (1 - es_fs_path_available_bytes{cluster=”$cluster”, node=”$node”} / es_fs_path_total_bytes{cluster=”$cluster”, node=”$node”}) > 0.85
+    for: 5m
+    labels:
+      severity: alert
+    annotations:
+      description: TBD
+      summary: TBD
+  - alert: Disk_High_Watermark_Reached
+    expr: (1 - es_fs_path_available_bytes{cluster=”$cluster”, node=”$node”} / es_fs_path_total_bytes{cluster=”$cluster”, node=”$node”}) > 0.9
+    for: 5m
+    labels:
+      severity: alert
+    annotations:
+      description: TBD
+      summary: TBD
+  - alert: Disk_Low_For_Segment_Merges
+    expr: (1 - es_fs_path_available_bytes{cluster=”$cluster”, node=”$node”} / es_fs_path_total_bytes{cluster=”$cluster”, node=”$node”}) > 0.5
+    for: 10m
+    labels:
+      severity: alert
+    annotations:
+      description: TBD
+      summary: TBD
+  #
+  # JVM Heap Usage
+  # ==============
+  #
+  # ES is by default configured to start heavy GC when JVM heap usage crosses 75%.
+  #
+  - alert: JVM_Heap_High
+    expr: es_jvm_mem_heap_used_percent{cluster=”$cluster”, node=”$node”} > 0.75
+    for: 1m
+    labels:
+      severity: alert
+    annotations:
+      description: TBD
+      summary: TBD
+  #
+  # CPU Usage
+  # ==============
+  #
+  # High CPU usage for longer period signals capacity problem.
+  # This alert might be already configured at higher level as it is not ES specific.
+  # Optionally, we can focus on ES process CPU only.
+  #
+  - alert: System_CPU_High
+    expr: es_os_cpu_percent{cluster=”$cluster”, node=”$node”} > 0.9
+    for: 1m
+    labels:
+      severity: alert
+    annotations:
+      description: TBD
+      summary: TBD
+  - alert: ES_process_CPU_High
+    expr: es_process_cpu_percent{cluster=”$cluster”, node=”$node”} > 0.9
+    for: 1m
+    labels:
+      severity: alert
+    annotations:
+      description: TBD
+      summary: TBD
