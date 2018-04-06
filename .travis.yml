@@ -32,6 +32,10 @@ before_install:
 - rm -rf prometheus-2.0.0.linux-amd64.tar.gz prometheus-2.0.0.linux-amd64
 
 script:
+- env
 - pwd
+- cd build
+- cd lukas-vlcek
+- cd prometheus-elasticsearch-rules
 - ls -la
 - ./promtool_check.sh
