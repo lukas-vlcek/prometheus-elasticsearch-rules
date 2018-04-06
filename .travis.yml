@@ -2,7 +2,7 @@
 
 before_install:
 - curl -s https://packagecloud.io/install/repositories/prometheus-deb/release/script.deb.sh | sudo bash
-- sudo apt-get install prometheus=2.1.0-1
+- sudo apt-get install prometheus
 
 script:
 - ./promtool_check.sh
