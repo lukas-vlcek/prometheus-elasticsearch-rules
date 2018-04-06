@@ -28,9 +28,8 @@ before_install:
 - sudo chown -R prometheus:prometheus /etc/prometheus/consoles
 - sudo chown -R prometheus:prometheus /etc/prometheus/console_libraries
 - rm -rf prometheus-2.0.0.linux-amd64.tar.gz prometheus-2.0.0.linux-amd64
-- cd ~
-- pwd
-- ls -la
 
 script:
+- pwd
+- ls -la
 - ./promtool_check.sh
