@@ -9,6 +9,8 @@ before_install:
 #- sudo apt-get update
 #- sudo apt-get install prometheus
 # ----------------
+- pwd
+- ls -la
 - sudo useradd --no-create-home --shell /bin/false prometheus
 - sudo useradd --no-create-home --shell /bin/false node_exporter
 - sudo mkdir /etc/prometheus
