@@ -1,0 +1,19 @@
+groups:
+- name: elasticsearch_logging
+  rules:
+  - alert: ClusterHealthStatusRED
+    expr: (es_cluster_status{cluster=”$cluster”}) == 2
+    for: 2m
+    labels:
+      severity: critical
+    annotations:
+      description: Cluster health status is RED this is serious
+      summary: Cluster health status RED
+  - alert: ClusterHealthStatusYELLOW
+    expr: (es_cluster_status{cluster=”$cluster”}) == 1
+    for: 20m
+    labels:
+      severity: high
+    annotations:
+      description: Cluster health status is YELLOW for extended period of time
+      summary: Cluster health status YELLOW
