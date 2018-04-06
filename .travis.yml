@@ -3,10 +3,10 @@
 before_install:
 #- curl -s https://packagecloud.io/install/repositories/prometheus-deb/release/script.deb.sh | sudo bash
 #- sudo apt-get install prometheus=2.1.0-1
-- curl -L https://packagecloud.io/prometheus-deb/release/gpgkey | apt-key add -
-- echo 'deb https://packagecloud.io/prometheus-deb/release/ubuntu/ xenial main' > /etc/apt/sources.list.d/prometheus.list
-- apt-get update
-- apt-get install prometheus
+- sudo curl -L https://packagecloud.io/prometheus-deb/release/gpgkey | apt-key add -
+- sudo echo 'deb https://packagecloud.io/prometheus-deb/release/ubuntu/ xenial main' > /etc/apt/sources.list.d/prometheus.list
+- sudo apt-get update
+- sudo apt-get install prometheus
 
 script:
 - ./promtool_check.sh
