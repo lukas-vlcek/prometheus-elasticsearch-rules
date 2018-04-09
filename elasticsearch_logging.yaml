@@ -94,7 +94,12 @@ groups:
   # JVM Heap Usage
   # ==============
   #
-  # ES is by default configured to start heavy GC when JVM heap usage crosses 75%.
+  # ES is by default configured to start heavy GC when JVM heap usage crosses 75%. Thus, if ES is using more
+  # that 75% JVM heap for a _longer_ period of time we should check why it is not able to free the memory.
+  #
+  # This is ensured by use of -XX:CMSInitiatingOccupancyFraction=75 and -XX:+UseCMSInitiatingOccupancyOnly
+  # in `distribution/src/config/jvm.options` in ES source code. Notice that this config is relevant as long as JVM
+  # is using CMS. Once G1 is used this may change.
   #
   - alert: JVM_Heap_High
     expr: es_jvm_mem_heap_used_percent{cluster="$cluster", node="$node"} > 0.75
