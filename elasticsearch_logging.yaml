@@ -43,8 +43,8 @@ groups:
   # up with incoming bulk request indexing pace.
   #
   - alert: Bulk_Requests_Rejection_HIGH
-    expr: TBD - es_threadpool_threads_count{cluster="$cluster", node="$node", name="bulk", type="rejected"}
-    for: 20m
+    expr: es_threadpool_threads_count{cluster="$cluster", node="$node", name="bulk", type="rejected"} / es_threadpool_threads_count{cluster="$cluster", node="$node", name="bulk", type="completed"}
+    for: 10m
     labels:
       severity: high
     annotations:
