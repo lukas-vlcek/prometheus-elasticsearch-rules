@@ -7,18 +7,18 @@ before_install:
 - sudo chown prometheus:prometheus /etc/prometheus
 - sudo chown prometheus:prometheus /var/lib/prometheus
 - cd ~
-- curl -LO https://github.com/prometheus/prometheus/releases/download/v2.0.0/prometheus-2.0.0.linux-amd64.tar.gz
-- sha256sum prometheus-2.0.0.linux-amd64.tar.gz
-- tar xvf prometheus-2.0.0.linux-amd64.tar.gz
-- sudo cp prometheus-2.0.0.linux-amd64/prometheus /usr/local/bin/
-- sudo cp prometheus-2.0.0.linux-amd64/promtool /usr/local/bin/
+- curl -LO https://github.com/prometheus/prometheus/releases/download/v2.2.1/prometheus-2.2.1.linux-amd64.tar.gz
+- sha256sum prometheus-2.2.1.linux-amd64.tar.gz
+- tar xvf prometheus-2.2.1.linux-amd64.tar.gz
+- sudo cp prometheus-2.2.1.linux-amd64/prometheus /usr/local/bin/
+- sudo cp prometheus-2.2.1.linux-amd64/promtool /usr/local/bin/
 - sudo chown prometheus:prometheus /usr/local/bin/prometheus
 - sudo chown prometheus:prometheus /usr/local/bin/promtool
-- sudo cp -r prometheus-2.0.0.linux-amd64/consoles /etc/prometheus
-- sudo cp -r prometheus-2.0.0.linux-amd64/console_libraries /etc/prometheus
+- sudo cp -r prometheus-2.2.1.linux-amd64/consoles /etc/prometheus
+- sudo cp -r prometheus-2.2.1.linux-amd64/console_libraries /etc/prometheus
 - sudo chown -R prometheus:prometheus /etc/prometheus/consoles
 - sudo chown -R prometheus:prometheus /etc/prometheus/console_libraries
-- rm -rf prometheus-2.0.0.linux-amd64.tar.gz prometheus-2.0.0.linux-amd64
+- rm -rf prometheus-2.2.1.linux-amd64.tar.gz prometheus-2.2.1.linux-amd64
 
 script:
 - cd $TRAVIS_BUILD_DIR
