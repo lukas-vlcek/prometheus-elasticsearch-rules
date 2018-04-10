@@ -5,5 +5,5 @@ Assuming ES metrics are collected via <https://github.com/vvanholl/elasticsearch
 Verify rules file (or let travis do it for you after commit):
 
 ```
-promtool check rules ./elasticsearch_logging.yaml
+promtool check rules ./elasticsearch_logging.rules.yaml
 ```
