@@ -20,7 +20,7 @@ groups:
   # is considered serious.
   #
   - alert: Cluster_Health_Status_RED
-    expr: (es_cluster_status{cluster="$cluster"}) == 2
+    expr: es_cluster_status{cluster="$cluster"} == 2
     for: 2m
     labels:
       severity: critical
@@ -28,7 +28,7 @@ groups:
       description: Cluster health status is RED this is serious
       summary: Cluster health status RED
   - alert: Cluster_Health_Status_YELLOW
-    expr: (es_cluster_status{cluster="$cluster"}) == 1
+    expr: es_cluster_status{cluster="$cluster"} == 1
     for: 20m
     labels:
       severity: high
@@ -43,7 +43,10 @@ groups:
   # up with incoming bulk request indexing pace.
   #
   - alert: Bulk_Requests_Rejection_HIGH
-    expr: es_threadpool_threads_count{cluster="$cluster", node="$node", name="bulk", type="rejected"} / es_threadpool_threads_count{cluster="$cluster", node="$node", name="bulk", type="completed"}
+    expr: >
+            sum by (cluster, node) (rate(es_threadpool_threads_count{cluster="$cluster", node="$node", name="bulk", type="rejected"}[2m])) /
+            sum by (cluster, node) (rate(es_threadpool_threads_count{cluster="$cluster", node="$node", name="bulk", type="completed"}[2m]))
+            > 0.05
     for: 10m
     labels:
       severity: high
@@ -67,7 +70,11 @@ groups:
   # [2] https://www.elastic.co/guide/en/elasticsearch/reference/5.5/disk-allocator.html
   #
   - alert: Disk_Low_Watermark_Reached
-    expr: (1 - es_fs_path_available_bytes{cluster="$cluster", node="$node"} / es_fs_path_total_bytes{cluster="$cluster", node="$node"}) > 0.85
+    expr: >
+            1 - (
+              es_fs_path_available_bytes{cluster="$cluster", node="$node"} /
+              es_fs_path_total_bytes{cluster="$cluster", node="$node"}
+            ) > 0.85
     for: 5m
     labels:
       severity: alert
@@ -75,7 +82,11 @@ groups:
       description: TBD
       summary: TBD
   - alert: Disk_High_Watermark_Reached
-    expr: (1 - es_fs_path_available_bytes{cluster="$cluster", node="$node"} / es_fs_path_total_bytes{cluster="$cluster", node="$node"}) > 0.9
+    expr: >
+            1 - (
+              es_fs_path_available_bytes{cluster="$cluster", node="$node"} /
+              es_fs_path_total_bytes{cluster="$cluster", node="$node"}
+            ) > 0.9
     for: 5m
     labels:
       severity: alert
@@ -83,7 +94,11 @@ groups:
       description: TBD
       summary: TBD
   - alert: Disk_Low_For_Segment_Merges
-    expr: (1 - es_fs_path_available_bytes{cluster="$cluster", node="$node"} / es_fs_path_total_bytes{cluster="$cluster", node="$node"}) > 0.5
+    expr: >
+            1 - (
+              es_fs_path_available_bytes{cluster="$cluster", node="$node"} /
+              es_fs_path_total_bytes{cluster="$cluster", node="$node"}
+            ) > 0.5
     for: 10m
     labels:
       severity: alert
