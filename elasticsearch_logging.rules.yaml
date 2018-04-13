@@ -134,13 +134,13 @@ groups:
   # is using CMS. Once G1 is used this may change.
   #
   - alert: JVM_Heap_High
-    expr: es_jvm_mem_heap_used_percent{cluster="$cluster", node="$node"} > 0.75
-    for: 1m
+    expr: sum by (cluster, node) (es_jvm_mem_heap_used_percent) > 75
+    for: 5m
     labels:
       severity: alert
     annotations:
-      summary: TBD
-      description: TBD
+      summary: 'JVM Heap usage on the node is high'
+      description: 'JVM Heap usage on the node {{ $labels.node }} in {{ $labels.cluster }} cluster is {{ $value }}%. There might be long running GCs now.'
   #
   # CPU Usage
   # ==============
