@@ -45,8 +45,8 @@ groups:
   #
   - alert: Bulk_Requests_Rejection_HIGH
     expr: >
-            sum by (cluster, node) (rate(es_threadpool_threads_count{cluster="$cluster", node="$node", name="bulk", type="rejected"}[2m])) /
-            sum by (cluster, node) (rate(es_threadpool_threads_count{cluster="$cluster", node="$node", name="bulk", type="completed"}[2m]))
+            sum by (cluster, node) (rate(es_threadpool_threads_count{name="bulk", type="rejected"}[2m])) /
+            sum by (cluster, node) (rate(es_threadpool_threads_count{name="bulk", type="completed"}[2m]))
             > 0.05
     for: 10m
     labels:
@@ -104,6 +104,8 @@ groups:
       summary: 'High Watermark Reached - disk saturation is {{ $value }}%'
       description: 'High Watermark Reached at {{ $labels.node }} node in {{ $labels.cluster }} cluster'
 
+  # TODO: This one is not correct. We need to compare total index size vs remaining disk space.
+  # We want to make sure the index can fit into disk two times!
   - alert: Disk_Low_For_Segment_Merges
     expr: >
             sum by (cluster, node) (
