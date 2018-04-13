@@ -152,19 +152,19 @@ groups:
   # Optionally, we can focus on ES process CPU only.
   #
   - alert: System_CPU_High
-    expr: es_os_cpu_percent{cluster="$cluster", node="$node"} > 0.9
+    expr: sum by (cluster, node) (es_os_cpu_percent) > 90
     for: 1m
     labels:
       severity: alert
     annotations:
-      summary: TBD
-      description: TBD
+      summary: 'System CPU usage is high'
+      description: 'System CPU usage on the node {{ $labels.node }} in {{ $labels.cluster }} cluster is {{ $value }}%'
 
   - alert: ES_process_CPU_High
-    expr: es_process_cpu_percent{cluster="$cluster", node="$node"} > 0.9
+    expr: sum by (cluster, node) (es_process_cpu_percent) > 90
     for: 1m
     labels:
       severity: alert
     annotations:
-      summary: TBD
-      description: TBD
+      summary: 'ES process CPU usage is high'
+      description: 'ES process CPU usage on the node {{ $labels.node }} in {{ $labels.cluster }} cluster is {{ $value }}%'
