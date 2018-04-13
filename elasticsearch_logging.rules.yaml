@@ -20,22 +20,22 @@ groups:
   # is considered serious.
   #
   - alert: Cluster_Health_Status_RED
-    expr: es_cluster_status{cluster="$cluster"} == 2
+    expr: sum by (cluster) (es_cluster_status == 2)
     for: 2m
     labels:
       severity: critical
     annotations:
-      summary: Cluster health status RED
-      description: Cluster health status is RED this is serious
+      summary: 'Cluster health status is RED'
+      description: 'Cluster {{ $labels.cluster }} health status has been RED for at least 2 minutes'
 
   - alert: Cluster_Health_Status_YELLOW
-    expr: es_cluster_status{cluster="$cluster"} == 1
+    expr: sum by (cluster) (es_cluster_status == 1)
     for: 20m
     labels:
       severity: high
     annotations:
-      summary: Cluster health status YELLOW
-      description: Cluster health status is YELLOW for extended period of time
+      summary: 'Cluster health status is YELLOW'
+      description: 'Cluster {{ $labels.cluster }} health status has been YELLOW for at least 20 minutes'
   #
   # Bulk Requests Rejection
   # =======================
