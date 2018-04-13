@@ -25,8 +25,8 @@ groups:
     labels:
       severity: critical
     annotations:
-      description: Cluster health status is RED this is serious
       summary: Cluster health status RED
+      description: Cluster health status is RED this is serious
 
   - alert: Cluster_Health_Status_YELLOW
     expr: es_cluster_status{cluster="$cluster"} == 1
@@ -34,8 +34,8 @@ groups:
     labels:
       severity: high
     annotations:
-      description: Cluster health status is YELLOW for extended period of time
       summary: Cluster health status YELLOW
+      description: Cluster health status is YELLOW for extended period of time
   #
   # Bulk Requests Rejection
   # =======================
@@ -52,8 +52,8 @@ groups:
     labels:
       severity: high
     annotations:
-      description: TBD
       summary: TBD
+      description: TBD
   #
   # Disk Usage
   # ==========
@@ -84,8 +84,8 @@ groups:
     labels:
       severity: alert
     annotations:
-      description: 'Low Watermark Reached - disk saturation is {{ $value }}%'
-      summary: 'Low Watermark Reached at {{ $labels.node }} node in {{ $labels.cluster }} cluster'
+      summary: 'Low Watermark Reached - disk saturation is {{ $value }}%'
+      description: 'Low Watermark Reached at {{ $labels.node }} node in {{ $labels.cluster }} cluster'
 
   - alert: Disk_High_Watermark_Reached
     expr: >
@@ -101,8 +101,8 @@ groups:
     labels:
       severity: alert
     annotations:
-      description: 'High Watermark Reached - disk saturation is {{ $value }}%'
-      summary: 'High Watermark Reached at {{ $labels.node }} node in {{ $labels.cluster }} cluster'
+      summary: 'High Watermark Reached - disk saturation is {{ $value }}%'
+      description: 'High Watermark Reached at {{ $labels.node }} node in {{ $labels.cluster }} cluster'
 
   - alert: Disk_Low_For_Segment_Merges
     expr: >
@@ -118,8 +118,8 @@ groups:
     labels:
       severity: warning
     annotations:
-      description: 'Available disk may be low for segment merges - disk saturation is {{ $value }}%'
-      summary: 'Disk saturation at {{ $labels.node }} node in {{ $labels.cluster }} cluster reached {{ $value }}%'
+      summary: 'Available disk may be low for segment merges - disk saturation is {{ $value }}%'
+      description: 'Disk saturation at {{ $labels.node }} node in {{ $labels.cluster }} cluster reached {{ $value }}%'
   #
   # JVM Heap Usage
   # ==============
@@ -137,8 +137,8 @@ groups:
     labels:
       severity: alert
     annotations:
-      description: TBD
       summary: TBD
+      description: TBD
   #
   # CPU Usage
   # ==============
@@ -153,8 +153,8 @@ groups:
     labels:
       severity: alert
     annotations:
-      description: TBD
       summary: TBD
+      description: TBD
 
   - alert: ES_process_CPU_High
     expr: es_process_cpu_percent{cluster="$cluster", node="$node"} > 0.9
@@ -162,5 +162,5 @@ groups:
     labels:
       severity: alert
     annotations:
-      description: TBD
       summary: TBD
+      description: TBD
