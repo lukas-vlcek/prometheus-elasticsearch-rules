@@ -1,3 +1,3 @@
 #!/usr/bin/env bash
 
-promtool check rules ./elasticsearch_logging.rules.yaml
+promtool check rules ./logging_elasticsearch.rules.yaml

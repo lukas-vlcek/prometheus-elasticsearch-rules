@@ -1,5 +1,5 @@
 groups:
-- name: elasticsearch_logging
+- name: logging_elasticsearch
   rules:
   #
   # Cluster health alerts

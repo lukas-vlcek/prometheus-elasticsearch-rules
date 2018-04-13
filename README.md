@@ -9,7 +9,7 @@ scraping metrics by Prometheus server.
 
 Use `promtool` utility (it is part of Prometheus installation).
 ```
-promtool check rules ./elasticsearch_logging.rules.yaml
+promtool check rules ./logging_elasticsearch.rules.yaml
 ```
 
 This ^^ check is part of [Travis integration](.travis.yml).
@@ -24,10 +24,10 @@ consult [Prometheus documentation](https://prometheus.io/docs/prometheus/latest/
 $ pwd
 /etc/prometheus
 
-wget https://raw.githubusercontent.com/lukas-vlcek/prometheus-elasticsearch-rules/master/elasticsearch_logging.rules.yaml
+wget https://raw.githubusercontent.com/lukas-vlcek/prometheus-elasticsearch-rules/master/logging_elasticsearch.rules.yaml
 
 $ ls 
-elasticsearch_logging.rules.yaml
+logging_elasticsearch.rules.yaml
 prometheus.yml
 
 # Add rules file into Prometheus configuration file
@@ -35,7 +35,7 @@ $ vi prometheus.yml
 
 ## Add the following to the file:
 rule_files:
-  - elasticsearch_logging.rules.yaml
+  - logging_elasticsearch.rules.yaml
 
 # Restart Prometheus server to make it reload configuration.
 kill -HUP `pgrep prometheus`
