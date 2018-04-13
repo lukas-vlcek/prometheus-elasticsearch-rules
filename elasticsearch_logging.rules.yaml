@@ -43,6 +43,8 @@ groups:
   # Sudden spikes (increases) in number of rejected bulk requests is considered serious. It means the node can not keep
   # up with incoming bulk request indexing pace.
   #
+  # TODO: this is broken. Prometheus can not do this with vectors. We need to add recording rules first.
+  # Check https://docs.google.com/presentation/d/1X1rKozAUuF2MVc1YXElFWq9wkcWv3Axdldl8LOH9Vik/edit#slide=id.gb41e27854_0_27
   - alert: Bulk_Requests_Rejection_HIGH
     expr: >
             sum by (cluster, node) (rate(es_threadpool_threads_count{name="bulk", type="rejected"}[2m])) /
