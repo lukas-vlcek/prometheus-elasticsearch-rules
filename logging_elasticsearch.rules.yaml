@@ -1,7 +1,24 @@
 groups:
 - name: logging_elasticsearch
   rules:
-  #
+
+  # Recording rules
+  # #####################
+
+  # Bulk requests rates
+  # =====================
+  - record: bulk:rejected_requests:rate2m
+    expr: rate(es_threadpool_threads_count{name="bulk", type="rejected"}[2m])
+
+  - record: bulk:completed_requests:rate2m
+    expr: rate(es_threadpool_threads_count{name="bulk", type="completed"}[2m])
+
+  - record: bulk:reject_ratio:rate2m
+    expr: sum by (cluster, node) (bulk:rejected_requests:rate2m) / on (cluster, node) (bulk:completed_requests:rate2m)
+
+  # Alerting rules:
+  # #####################
+
   # Cluster health alerts
   # =====================
   #
