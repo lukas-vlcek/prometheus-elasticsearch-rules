@@ -13,11 +13,11 @@ groups:
   - record: bulk:completed_requests:rate2m
     expr: rate(es_threadpool_threads_count{name="bulk", type="completed"}[2m])
 
-  # If there are no bulk rejections then we get 0/0 which is NaN. Although this might seem counterintuitive
+  # If there are no bulk rejections then we get can 0/0 which is NaN. Although this might seem counterintuitive
   # it is in fact valid result wrt to Prometheus and a good practice also, see:
   # https://stackoverflow.com/questions/47056557/how-to-gracefully-avoid-divide-by-zero-in-prometheus
   - record: bulk:reject_ratio:rate2m
-    expr: sum by (cluster, node) (bulk:rejected_requests:rate2m) / on (cluster, node) (bulk:completed_requests:rate2m)
+    expr: sum by (cluster, instance, node) (bulk:rejected_requests:rate2m) / on (cluster, instance, node) (bulk:completed_requests:rate2m)
 
   # Alerting rules:
   # #####################
@@ -90,7 +90,7 @@ groups:
   #
   - alert: Disk_Low_Watermark_Reached
     expr: >
-            sum by (cluster, node) (
+            sum by (cluster, instance, node) (
               round(
                 (1 - (
                   es_fs_path_available_bytes /
@@ -107,7 +107,7 @@ groups:
 
   - alert: Disk_High_Watermark_Reached
     expr: >
-            sum by (cluster, node) (
+            sum by (cluster, instance, node) (
               round(
                 (1 - (
                   es_fs_path_available_bytes /
@@ -156,7 +156,7 @@ groups:
   # is using CMS. Once G1 is used this may change.
   #
   - alert: JVM_Heap_High
-    expr: sum by (cluster, node) (es_jvm_mem_heap_used_percent) > 75
+    expr: sum by (cluster, instance, node) (es_jvm_mem_heap_used_percent) > 75
     for: 5m
     labels:
       severity: alert
@@ -172,7 +172,7 @@ groups:
   # Optionally, we can focus on ES process CPU only.
   #
   - alert: System_CPU_High
-    expr: sum by (cluster, node) (es_os_cpu_percent) > 90
+    expr: sum by (cluster, instance, node) (es_os_cpu_percent) > 90
     for: 1m
     labels:
       severity: alert
@@ -181,7 +181,7 @@ groups:
       description: 'System CPU usage on the node {{ $labels.node }} in {{ $labels.cluster }} cluster is {{ $value }}%'
 
   - alert: ES_process_CPU_High
-    expr: sum by (cluster, node) (es_process_cpu_percent) > 90
+    expr: sum by (cluster, instance, node) (es_process_cpu_percent) > 90
     for: 1m
     labels:
       severity: alert
