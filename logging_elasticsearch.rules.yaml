@@ -122,26 +122,28 @@ groups:
       summary: 'High Watermark Reached - disk saturation is {{ $value }}%'
       description: 'High Watermark Reached at {{ $labels.node }} node in {{ $labels.cluster }} cluster'
 
-  # TODO: This one is not correct. We need to compare total index size vs remaining disk space.
-  # We want to make sure the index can fit into disk two times!
+  # We want to make sure the index can fit into disk at least two times for optimal segment merges.
+  #
+  # Remaining space on the node:
+  #   sum by (cluster, instance, node) (es_fs_path_free_bytes)
+  # Though this ^^ might not be the best metric, because node can have multiple paths where the
+  # data can be stored but pure sum by paths is not what ES can fully utilize.
+  # Also there are known issues, see https://github.com/elastic/elasticsearch/issues/27174
+  #
   # Total index size by node:
-  # sum by (cluster, instance, node) (es_index_store_size_bytes{context="total"})
+  #   sum by (cluster, instance, node) (es_index_store_size_bytes{context="total"}) // <- this does not seem to work correctly!?
+  #   sum by (cluster, instance, node) (es_indices_store_size_bytes)
   - alert: Disk_Low_For_Segment_Merges
     expr: >
-            sum by (cluster, node) (
-              round(
-                (1 - (
-                  es_fs_path_available_bytes /
-                  es_fs_path_total_bytes
-                )
-              ) * 100, 0.001)
-            ) > 50
+            sum by (cluster, instance, node) (es_fs_path_free_bytes) /
+            sum by (cluster, instance, node) (es_indices_store_size_bytes)
+            < 1
     for: 10m
     labels:
       severity: warning
     annotations:
-      summary: 'Available disk may be low for segment merges - disk saturation is {{ $value }}%'
-      description: 'Disk saturation at {{ $labels.node }} node in {{ $labels.cluster }} cluster reached {{ $value }}%'
+      summary: 'Free disk may be low for segment merges'
+      description: 'Free disk at {{ $labels.node }} node in {{ $labels.cluster }} cluster may be low for segment merges'
   #
   # JVM Heap Usage
   # ==============
