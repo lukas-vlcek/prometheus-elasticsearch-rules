@@ -13,6 +13,9 @@ groups:
   - record: bulk:completed_requests:rate2m
     expr: rate(es_threadpool_threads_count{name="bulk", type="completed"}[2m])
 
+  # If there are no bulk rejections then we get 0/0 which is NaN. Although this might seem counterintuitive
+  # it is in fact valid result wrt to Prometheus and a good practice also, see:
+  # https://stackoverflow.com/questions/47056557/how-to-gracefully-avoid-divide-by-zero-in-prometheus
   - record: bulk:reject_ratio:rate2m
     expr: sum by (cluster, node) (bulk:rejected_requests:rate2m) / on (cluster, node) (bulk:completed_requests:rate2m)
 
@@ -62,13 +65,13 @@ groups:
   #
   # Check https://docs.google.com/presentation/d/1X1rKozAUuF2MVc1YXElFWq9wkcWv3Axdldl8LOH9Vik/edit#slide=id.gb41e27854_0_27
   - alert: Bulk_Requests_Rejection_HIGH
-    expr: bulk:reject_ratio:rate2m > 0.05
+    expr: round( bulk:reject_ratio:rate2m * 100, 0.001 ) > 5
     for: 10m
     labels:
       severity: high
     annotations:
-      summary: TBD
-      description: TBD
+      summary: 'High Bulk Rejection Ratio - {{ $value }}%'
+      description: 'High Bulk Rejection Ratio at {{ $labels.node }} node in {{ $labels.cluster }} cluster'
   #
   # Disk Usage
   # ==========
@@ -121,6 +124,8 @@ groups:
 
   # TODO: This one is not correct. We need to compare total index size vs remaining disk space.
   # We want to make sure the index can fit into disk two times!
+  # Total index size by node:
+  # sum by (cluster, instance, node) (es_index_store_size_bytes{context="total"})
   - alert: Disk_Low_For_Segment_Merges
     expr: >
             sum by (cluster, node) (
